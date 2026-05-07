@@ -1,0 +1,73 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Buyzeno | Dashboard{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel reveal">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Overview</span>
+            <h2>Store performance at a glance</h2>
+        </div>
+    </div>
+
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <span>Total products</span>
+            <strong>{{ metrics.products }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Total orders</span>
+            <strong>{{ metrics.orders }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Total users</span>
+            <strong>{{ metrics.users }}</strong>
+        </div>
+        <div class="metric-card">
+            <span>Total sales</span>
+            <strong>${{ metrics.sales|floatformat:2 }}</strong>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <section class="panel-card">
+            <div class="panel-card__header">
+                <h3>Low stock watch</h3>
+                <a href="{% url 'admin_products' %}" class="text-link" data-transition>Manage products</a>
+            </div>
+            {% for product in low_stock_products %}
+                <div class="list-line">
+                    <div>
+                        <strong>{{ product.name }}</strong>
+                        <p>{{ product.stock_label }}</p>
+                    </div>
+                    <span class="price-tag">{{ product.stock }}</span>
+                </div>
+            {% empty %}
+                <p class="muted-copy">No low stock items right now.</p>
+            {% endfor %}
+        </section>
+
+        <section class="panel-card">
+            <div class="panel-card__header">
+                <h3>Recent orders</h3>
+                <a href="{% url 'admin_orders' %}" class="text-link" data-transition>View all</a>
+            </div>
+            {% for order in recent_orders %}
+                <div class="list-line">
+                    <div>
+                        <strong>Order #{{ order.id }}</strong>
+                        <p>{{ order.user.username }} · {{ order.created_at|date:"M d, Y" }}</p>
+                    </div>
+                    <span class="status-pill {% if order.status == 'Delivered' %}status-pill--success{% elif order.status == 'Shipped' %}status-pill--warning{% else %}status-pill--neutral{% endif %}">
+                        {{ order.status }}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="muted-copy">Orders will appear here as soon as customers check out.</p>
+            {% endfor %}
+        </section>
+    </div>
+</div>
+{% endblock %}

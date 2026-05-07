@@ -1,0 +1,33 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Buyzeno | {{ page_title }}{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel reveal">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Catalog Editor</span>
+            <h2>{{ page_title }}</h2>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <small class="field-error">{{ field.errors|join:', ' }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit" class="solid-button">{{ submit_label }}</button>
+                <a href="{% url 'admin_products' %}" class="ghost-button" data-transition>Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

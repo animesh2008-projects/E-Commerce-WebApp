@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Buyzeno | Home{% endblock %}
+
+{% block content %}
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-copy reveal">
+            <span class="eyebrow">Animated Commerce</span>
+            <h1>Welcome to Buyzeno</h1>
+            <p class="hero-subtitle">Smart Shopping Starts Here</p>
+            <p class="hero-description">
+                Browse curated products, build your cart with delightfully smooth interactions,
+                and manage everything from a modern admin dashboard.
+            </p>
+            <div class="hero-actions">
+                <a href="{% url 'product_list' %}" class="solid-button" data-transition>Shop Now</a>
+                {% if user.is_staff %}
+                    <a href="{% url 'admin_dashboard' %}" class="ghost-button" data-transition>Open Dashboard</a>
+                {% else %}
+                    <a href="{% url 'register' %}" class="ghost-button" data-transition>Create Account</a>
+                {% endif %}
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <strong>Responsive</strong>
+                    <span>Built for mobile, tablet, and desktop.</span>
+                </div>
+                <div class="stat-card">
+                    <strong>Fast Flow</strong>
+                    <span>Cart and checkout updates happen instantly.</span>
+                </div>
+                <div class="stat-card">
+                    <strong>Admin Ready</strong>
+                    <span>Products, orders, users, and stock in one place.</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual reveal">
+            <div class="visual-card visual-card--primary">
+                <span>Trending Picks</span>
+                <strong>Confident design, calm checkout, smooth motion.</strong>
+            </div>
+            <div class="visual-card visual-card--secondary">
+                <span>Live Cart</span>
+                <strong>Animated add-to-cart actions keep users in flow.</strong>
+            </div>
+            <div class="visual-orb visual-orb--one"></div>
+            <div class="visual-orb visual-orb--two"></div>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container">
+        <div class="section-heading reveal">
+            <div>
+                <span class="eyebrow">Featured</span>
+                <h2>Products worth exploring</h2>
+            </div>
+            <a href="{% url 'product_list' %}" class="text-link" data-transition>See all products</a>
+        </div>
+
+        <div class="product-grid">
+            {% for product in featured_products %}
+                <article class="product-card reveal">
+                    <a href="{% url 'product_detail' product.slug %}" class="product-card__image" data-transition>
+                        <img src="{{ product.image|default:'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=80' }}" alt="{{ product.name }}">
+                    </a>
+                    <div class="product-card__body">
+                        <div class="product-card__meta">
+                            <span class="status-pill {% if product.stock == 0 %}status-pill--danger{% elif product.stock <= 5 %}status-pill--warning{% else %}status-pill--success{% endif %}">
+                                {{ product.stock_label }}
+                            </span>
+                            <span class="price-tag">${{ product.price|floatformat:2 }}</span>
+                        </div>
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description|truncatechars:100 }}</p>
+                        <div class="product-card__actions">
+                            <a href="{% url 'product_detail' product.slug %}" class="ghost-button" data-transition>View Details</a>
+                            <form method="post" action="{% url 'add_to_cart' product.id %}" class="inline-form js-add-to-cart">
+                                {% csrf_token %}
+                                <button type="submit" class="solid-button">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-card reveal">
+                    <h3>No featured products yet</h3>
+                    <p>Add products from the admin dashboard to light up the storefront.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="section-block section-block--muted">
+    <div class="container">
+        <div class="section-heading reveal">
+            <div>
+                <span class="eyebrow">Latest Arrivals</span>
+                <h2>Fresh additions for smart shoppers</h2>
+            </div>
+        </div>
+
+        <div class="marquee-grid">
+            {% for product in latest_products %}
+                <a href="{% url 'product_detail' product.slug %}" class="marquee-card reveal" data-transition>
+                    <img src="{{ product.image|default:'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=900&q=80' }}" alt="{{ product.name }}">
+                    <div>
+                        <strong>{{ product.name }}</strong>
+                        <span>${{ product.price|floatformat:2 }}</span>
+                    </div>
+                </a>
+            {% empty %}
+                <div class="empty-card reveal">
+                    <h3>Your catalog starts here</h3>
+                    <p>Run the seed command or add products in the dashboard to populate Buyzeno.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

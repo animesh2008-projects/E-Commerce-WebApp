@@ -1,0 +1,65 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Buyzeno | Product Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel reveal">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Catalog</span>
+            <h2>Manage products and stock</h2>
+        </div>
+        <a href="{% url 'admin_product_create' %}" class="solid-button" data-transition>Add Product</a>
+    </div>
+
+    <form method="get" class="toolbar-card toolbar-card--compact">
+        <div class="toolbar-field">
+            <label for="admin-search">Search products</label>
+            <input id="admin-search" type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search name or description">
+        </div>
+        <div class="toolbar-actions">
+            <button type="submit" class="solid-button">Search</button>
+        </div>
+    </form>
+
+    <div class="table-card">
+        <div class="table-head">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Stock</span>
+            <span>Actions</span>
+        </div>
+        {% for product in products %}
+            <div class="table-row">
+                <div>
+                    <strong>{{ product.name }}</strong>
+                    <p>{{ product.description|truncatechars:70 }}</p>
+                </div>
+                <span>${{ product.price|floatformat:2 }}</span>
+                <div>
+                    <span class="status-pill {% if product.stock == 0 %}status-pill--danger{% elif product.stock <= 5 %}status-pill--warning{% else %}status-pill--success{% endif %}">
+                        {{ product.stock_label }}
+                    </span>
+                    <form method="post" action="{% url 'admin_product_stock_update' product.id %}" class="inline-stock-form">
+                        {% csrf_token %}
+                        <input type="number" min="0" name="stock" value="{{ product.stock }}" class="form-control">
+                        <button type="submit" class="ghost-button">Save</button>
+                    </form>
+                </div>
+                <div class="table-actions">
+                    <a href="{% url 'admin_product_edit' product.id %}" class="ghost-button" data-transition>Edit</a>
+                    <form method="post" action="{% url 'admin_product_delete' product.id %}" class="inline-form" onsubmit="return confirm('Delete {{ product.name }}?');">
+                        {% csrf_token %}
+                        <button type="submit" class="text-button">Delete</button>
+                    </form>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-card">
+                <h3>No products in catalog</h3>
+                <p>Add your first product to populate the storefront.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
