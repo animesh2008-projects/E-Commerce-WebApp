@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Buyzeno | Shop{% endblock %}
+
+{% block content %}
+<section class="page-banner">
+    <div class="container reveal">
+        <span class="eyebrow">Product Listing</span>
+        <h1>Shop the Buyzeno catalog</h1>
+        <p>Search, filter, and explore animated product cards designed to feel sharp on every screen.</p>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container">
+        <form method="get" class="toolbar-card reveal">
+            <div class="toolbar-field">
+                <label for="search">Search products</label>
+                <input id="search" type="search" name="q" value="{{ query }}" class="form-control" placeholder="Search by product name">
+            </div>
+            <div class="toolbar-field">
+                <label for="availability">Availability</label>
+                <select id="availability" name="availability" class="form-control">
+                    <option value="">All products</option>
+                    <option value="in-stock" {% if availability == 'in-stock' %}selected{% endif %}>In stock</option>
+                    <option value="low-stock" {% if availability == 'low-stock' %}selected{% endif %}>Low stock</option>
+                    <option value="out-of-stock" {% if availability == 'out-of-stock' %}selected{% endif %}>Out of stock</option>
+                </select>
+            </div>
+            <div class="toolbar-actions">
+                <button type="submit" class="solid-button">Filter</button>
+                <a href="{% url 'product_list' %}" class="ghost-button" data-transition>Reset</a>
+            </div>
+        </form>
+
+        <div class="product-grid">
+            {% for product in products %}
+                <article class="product-card reveal">
+                    <a href="{% url 'product_detail' product.slug %}" class="product-card__image" data-transition>
+                        <img src="{{ product.image|default:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80' }}" alt="{{ product.name }}">
+                    </a>
+                    <div class="product-card__body">
+                        <div class="product-card__meta">
+                            <span class="status-pill {% if product.stock == 0 %}status-pill--danger{% elif product.stock <= 5 %}status-pill--warning{% else %}status-pill--success{% endif %}">
+                                {{ product.stock_label }}
+                            </span>
+                            <span class="price-tag">${{ product.price|floatformat:2 }}</span>
+                        </div>
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description|truncatechars:120 }}</p>
+                        <div class="product-card__actions">
+                            <a href="{% url 'product_detail' product.slug %}" class="ghost-button" data-transition>View Details</a>
+                            <form method="post" action="{% url 'add_to_cart' product.id %}" class="inline-form js-add-to-cart">
+                                {% csrf_token %}
+                                <button type="submit" class="solid-button">Add to Cart</button>
+                            </form>
+                        </div>
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-card reveal">
+                    <h3>No matching products</h3>
+                    <p>Try adjusting your filters or add new products from the dashboard.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

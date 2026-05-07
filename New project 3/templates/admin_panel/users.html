@@ -1,0 +1,52 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block title %}Buyzeno | User Management{% endblock %}
+
+{% block admin_content %}
+<div class="admin-panel reveal">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">Users</span>
+            <h2>View and manage customer accounts</h2>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-head">
+            <span>User</span>
+            <span>Email</span>
+            <span>Orders</span>
+            <span>Actions</span>
+        </div>
+        {% for user_item in users %}
+            <div class="table-row">
+                <div>
+                    <strong>{{ user_item.get_full_name|default:user_item.username }}</strong>
+                    <p>{{ user_item.username }} {% if user_item.is_staff %}· Admin{% endif %}</p>
+                </div>
+                <span>{{ user_item.email|default:'No email' }}</span>
+                <span>{{ user_item.order_total }}</span>
+                <div class="table-actions">
+                    <span class="status-pill {% if user_item.is_active %}status-pill--success{% else %}status-pill--danger{% endif %}">
+                        {% if user_item.is_active %}Active{% else %}Blocked{% endif %}
+                    </span>
+                    {% if user_item != request.user %}
+                        <form method="post" class="inline-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="user_id" value="{{ user_item.id }}">
+                            <button type="submit" class="text-button">
+                                {% if user_item.is_active %}Block{% else %}Unblock{% endif %}
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-card">
+                <h3>No users found</h3>
+                <p>User accounts will show up here after registrations.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
