@@ -43,10 +43,6 @@ python manage.py runserver
 - Admin: `admin / Admin@12345`
 - Customer: `demo / Demo@12345`
 
-## Notes
-
-- Because the project lives in a OneDrive-backed folder, SQLite is configured to store the database in `AppData\Local\Buyzeno\db.sqlite3` by default.
-- You can override the database path with the `BUYZENO_DB_PATH` environment variable.
 
 ## Validation
 
