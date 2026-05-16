@@ -1,4 +1,4 @@
-<img width="1920" height="1020" alt="Screenshot 2026-05-16 084924" src="https://github.com/user-attachments/assets/0a7e7abc-e5eb-4472-99e5-318a96429506" />
+
 # E-Commerce-WebApp
 # Buyzeno
 
@@ -54,3 +54,4 @@ python manage.py runserver
 python manage.py check
 python manage.py test
 ```
+<img width="1920" height="1020" alt="Screenshot 2026-05-16 084924" src="https://github.com/user-attachments/assets/0a7e7abc-e5eb-4472-99e5-318a96429506" />
